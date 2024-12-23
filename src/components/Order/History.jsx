@@ -1,73 +1,148 @@
-import { Badge, Descriptions, Divider, Space, Table, Tag } from "antd";
+import { Badge, Table, Tag, Space } from "antd";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { callOrderHistory } from "../../services/api";
+import { callOrderHistory, callFetchBookById } from "../../services/api";
 import { FORMAT_DATE_DISPLAY } from "../../utils/constant";
-import ReactJson from 'react-json-view'
+import { useNavigate } from "react-router-dom";
+import './history.scss';
 
 const History = () => {
     const [orderHistory, setOrderHistory] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
     useEffect(() => {
-        const fetchHistory = async () => {
-            const res = await callOrderHistory();
-            if (res && res.data) {
-                setOrderHistory(res.data);
-            }
-        }
         fetchHistory();
     }, []);
+
+    const fetchHistory = async () => {
+        setLoading(true);
+        try {
+            const res = await callOrderHistory();
+            if (res && res.data) {
+                // Fetch thêm thông tin chi tiết của từng book
+                const historyWithDetails = await Promise.all(
+                    res.data.map(async (item) => {
+                        if (item.detail?.[0]?._id) {
+                            const bookRes = await callFetchBookById(item.detail[0]._id);
+                            if (bookRes?.data) {
+                                return {
+                                    ...item,
+                                    detail: [{
+                                        ...item.detail[0],
+                                        thumbnail: bookRes.data.thumbnail,
+                                        mainText: bookRes.data.mainText
+                                    }]
+                                };
+                            }
+                        }
+                        return item;
+                    })
+                );
+                setOrderHistory(historyWithDetails);
+            }
+        } catch (error) {
+            console.error("Error fetching history:", error);
+        }
+        setLoading(false);
+    };
+
+    const handleViewBook = (record) => {
+        if (record.detail?.[0]?._id) {
+            const slug = convertSlug(record.detail[0].mainText || '');
+            navigate(`/book/${slug}?id=${record.detail[0]._id}`);
+        }
+    };
+
+    const convertSlug = (str) => {
+        str = str.toLowerCase();
+        str = str.replace(/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/g, 'a');
+        str = str.replace(/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/g, 'e');
+        str = str.replace(/(ì|í|ị|ỉ|ĩ)/g, 'i');
+        str = str.replace(/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/g, 'o');
+        str = str.replace(/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/g, 'u');
+        str = str.replace(/(ỳ|ý|ỵ|ỷ|ỹ)/g, 'y');
+        str = str.replace(/(đ)/g, 'd');
+        str = str.replace(/([^0-9a-z-\s])/g, '');
+        str = str.replace(/(\s+)/g, '-');
+        str = str.replace(/^-+/g, '');
+        str = str.replace(/-+$/g, '');
+        return str;
+    };
 
     const columns = [
         {
             title: 'STT',
             dataIndex: 'index',
             key: 'index',
-            render: (item, record, index) => (<>{index + 1}</>)
+            width: 60,
+            render: (_, record, index) => (<>{index + 1}</>)
         },
         {
-            title: 'Thời gian ',
+            title: 'Thời gian',
             dataIndex: 'createdAt',
-            render: (item, record, index) => {
-                return moment(item).format(FORMAT_DATE_DISPLAY)
-            }
+            key: 'createdAt',
+            render: (date) => (
+                <span>{moment(date).format(FORMAT_DATE_DISPLAY)}</span>
+            )
         },
         {
-            title: 'Tổng số tiền',
-            dataIndex: 'totalPrice',
-            render: (item, record, index) => {
-                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item)
+            title: 'Tên truyện',
+            key: 'bookName',
+            render: (_, record) => {
+                const firstDetail = record.detail?.[0];
+                return (
+                    <Space align="center" size={12}>
+                        {firstDetail?.thumbnail && (
+                            <img 
+                                src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${firstDetail.thumbnail}`}
+                                alt={firstDetail.mainText || firstDetail.bookName}
+                                className="book-thumbnail"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://placehold.co/60x80?text=No+Image';
+                                }}
+                            />
+                        )}
+                        {firstDetail ? (
+                            <div 
+                                className="book-title"
+                                onClick={() => handleViewBook(record)}
+                            >
+                                {firstDetail.mainText || firstDetail.bookName}
+                            </div>
+                        ) : (
+                            <Tag color="error">Không có dữ liệu</Tag>
+                        )}
+                    </Space>
+                );
             }
         },
         {
             title: 'Trạng thái',
-            render: (_, { tags }) => (
-
-                <Tag color={"green"}>
-                    Thành công
-                </Tag>
-            )
-        },
-        {
-            title: 'Chi tiết',
-            key: 'action',
+            key: 'status',
+            align: 'center',
             render: (_, record) => (
-                <ReactJson
-                    src={record.detail}
-                    name={"Chi tiết đơn mua"}
-                    collapsed={true}
-                    enableClipboard={false}
-                    displayDataTypes={false}
-                    displayObjectSize={false}
+                <Badge 
+                    status="success" 
+                    text="Đã đọc"
+                    className="status-badge"
                 />
-            ),
-        },
+            )
+        }
     ];
 
-
     return (
-        <div >
-            <div style={{ margin: "15px 0" }}>Lịch sử đặt hàng:</div>
-            <Table columns={columns} dataSource={orderHistory} pagination={false} />
+        <div className="history-container">
+            <h2 className="history-title">Lịch sử đọc truyện</h2>
+            <Table 
+                columns={columns} 
+                dataSource={orderHistory} 
+                loading={loading}
+                pagination={false}
+                rowKey="_id"
+                className="history-table"
+            />
         </div>
     )
 }

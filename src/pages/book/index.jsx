@@ -27,26 +27,9 @@ const BookPage = () => {
     const getImages = (raw) => {
         const images = [];
         if (raw.thumbnail) {
-            images.push(
-                {
-                    original: `${import.meta.env.VITE_BACKEND_URL}/images/book/${raw.thumbnail}`,
-                    thumbnail: `${import.meta.env.VITE_BACKEND_URL}/images/book/${raw.thumbnail}`,
-                    originalClass: "original-image",
-                    thumbnailClass: "thumbnail-image"
-                },
-            )
-        }
-        if (raw.slider) {
-            raw.slider?.map(item => {
-                images.push(
-                    {
-                        original: `${import.meta.env.VITE_BACKEND_URL}/images/book/${item}`,
-                        thumbnail: `${import.meta.env.VITE_BACKEND_URL}/images/book/${item}`,
-                        originalClass: "original-image",
-                        thumbnailClass: "thumbnail-image"
-                    },
-                )
-            })
+            images.push({
+                original: `${import.meta.env.VITE_BACKEND_URL}/images/book/${raw.thumbnail}`,
+            });
         }
         return images;
     }

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
+  Routes,
+  Route,
 } from "react-router-dom";
 import BookPage from './pages/book';
 import ContactPage from './pages/contact';
@@ -34,7 +36,6 @@ const Layout = () => {
     <div className='layout-app'>
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <Outlet context={[searchTerm, setSearchTerm]} />
-      <Footer />
     </div>
   )
 }
@@ -91,6 +92,10 @@ export default function App() {
             </ProtectedRoute>
           ,
         },
+        {
+          path: "order/:id",
+          element: <OrderPage />,
+        },
       ],
     },
 
@@ -100,13 +105,8 @@ export default function App() {
       errorElement: <NotFound />,
       children: [
         {
-          index: true, element:
-            <ProtectedRoute>
-              <AdminPage />
-            </ProtectedRoute>
-        },
-        {
-          path: "user",
+          index: true,
+           path: "user",
           element:
             <ProtectedRoute>
               <ManageUserPage />

@@ -43,9 +43,9 @@ const UserInfo = (props) => {
             }
         },
     };
-
+    const phone=1234567;
     const onFinish = async (values) => {
-        const { fullName, phone, _id } = values;
+        const { fullName, _id } = values;
         setIsSubmit(true)
         const res = await callUpdateUserInfo(_id, phone, fullName, userAvatar);
 
@@ -118,15 +118,6 @@ const UserInfo = (props) => {
                             name="fullName"
                             initialValue={user?.fullName}
                             rules={[{ required: true, message: 'Tên hiển thị không được để trống!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            labelCol={{ span: 24 }}
-                            label="Số điện thoại"
-                            name="phone"
-                            initialValue={user?.phone}
-                            rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
                         >
                             <Input />
                         </Form.Item>

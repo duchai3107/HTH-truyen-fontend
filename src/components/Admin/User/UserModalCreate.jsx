@@ -9,9 +9,9 @@ const UserModalCreate = (props) => {
     // https://ant.design/components/form#components-form-demo-control-hooks
     const [form] = Form.useForm();
 
-
+    const phone =123455678;
     const onFinish = async (values) => {
-        const { fullName, password, email, phone } = values;
+        const { fullName, password, email } = values;
         setIsSubmit(true)
         const res = await callCreateAUser(fullName, password, email, phone);
         if (res && res.data) {
@@ -70,14 +70,6 @@ const UserModalCreate = (props) => {
                         label="Email"
                         name="email"
                         rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        labelCol={{ span: 24 }}
-                        label="Số điện thoại"
-                        name="phone"
-                        rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
                     >
                         <Input />
                     </Form.Item>

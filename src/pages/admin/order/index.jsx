@@ -2,7 +2,9 @@ import MangeOrder from "../../../components/Admin/Order/MangeOrder";
 
 const AdminOrderPage = () => {
     return (
-        <MangeOrder />
+        <>
+                <MangeOrder />
+                </>   
     )
 }
 

@@ -7,9 +7,9 @@ import './register.scss';
 const RegisterPage = () => {
     const navigate = useNavigate();
     const [isSubmit, setIsSubmit] = useState(false);
-
+    const phone=123456789;
     const onFinish = async (values) => {
-        const { fullName, email, password, phone } = values;
+        const { fullName, email, password } = values;
         setIsSubmit(true);
         const res = await callRegister(fullName, email, password, phone);
         setIsSubmit(false);
@@ -68,14 +68,6 @@ const RegisterPage = () => {
                                 rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
                             >
                                 <Input.Password />
-                            </Form.Item>
-                            <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="Số điện thoại"
-                                name="phone"
-                                rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
-                            >
-                                <Input />
                             </Form.Item>
 
                             <Form.Item

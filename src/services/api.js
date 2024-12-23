@@ -56,7 +56,14 @@ export const callCreateBook = (thumbnail, slider, mainText, author, price, sold,
 
 export const callUpdateBook = (id, thumbnail, slider, mainText, author, price, sold, quantity, category) => {
     return axios.put(`/api/v1/book/${id}`, {
-        thumbnail, slider, mainText, author, price, sold, quantity, category
+        thumbnail, 
+        slider,
+        mainText, 
+        author, 
+        price, 
+        sold, 
+        quantity, 
+        category
     })
 }
 
@@ -79,7 +86,7 @@ export const callDeleteBook = (id) => {
 }
 
 export const callFetchBookById = (id) => {
-    return axios.get(`api/v1/book/${id}`)
+    return axios.get(`/api/v1/book/${id}`);
 }
 
 export const callPlaceOrder = (data) => {
@@ -124,4 +131,37 @@ export const callFetchDashboard = () => {
 
 export const callFetchListOrder = (query) => {
     return axios.get(`/api/v1/order?${query}`)
+}
+
+export const callUploadPDF = (filePdf) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('filePdf', filePdf);
+    return axios({
+        method: 'post',
+        url: '/api/v1/file/upload',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            "upload-type": "pdf"
+        },
+    });
+}
+export const callResetSlider = async (id) => {
+    // Fetch current book data first
+    const bookData = await callFetchBookById(id);
+    if (bookData?.data) {
+        const { thumbnail, mainText, author, price, sold, quantity, category } = bookData.data;
+        // Update with all required fields but empty slider
+        return axios.put(`/api/v1/book/${id}`, {
+            thumbnail,
+            slider: [], // Reset slider to empty array
+            mainText,
+            author,
+            price,
+            sold,
+            quantity,
+            category
+        });
+    }
+    throw new Error('Không thể lấy thông tin sách');
 }

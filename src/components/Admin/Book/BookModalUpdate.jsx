@@ -58,7 +58,8 @@ const BookModalUpdate = (props) => {
                     url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${item}`,
                 }
             })
-
+              const slider=dataUpdate.slider;
+              console.log(slider);
             const init = {
                 _id: dataUpdate._id,
                 mainText: dataUpdate.mainText,
@@ -68,7 +69,7 @@ const BookModalUpdate = (props) => {
                 quantity: dataUpdate.quantity,
                 sold: dataUpdate.sold,
                 thumbnail: { fileList: arrThumbnail },
-                slider: { fileList: arrSlider }
+                slider: slider
             }
             setInitForm(init);
             setDataThumbnail(arrThumbnail);
@@ -80,7 +81,9 @@ const BookModalUpdate = (props) => {
         }
     }, [dataUpdate])
 
-
+    const quantity = 12345;
+    const price = 12345;
+    const sold = 12345;
     const onFinish = async (values) => {
         if (dataThumbnail.length === 0) {
             notification.error({
@@ -99,10 +102,10 @@ const BookModalUpdate = (props) => {
         }
 
 
-        const { _id, mainText, author, price, sold, quantity, category } = values;
+        const { _id, mainText, author, category } = values;
         const thumbnail = dataThumbnail[0].name;
         const slider = dataSlider.map(item => item.name);
-
+        
         setIsSubmit(true)
         const res = await callUpdateBook(_id, thumbnail, slider, mainText, author, price, sold, quantity, category);
         if (res && res.data) {
@@ -210,7 +213,7 @@ const BookModalUpdate = (props) => {
     return (
         <>
             <Modal
-                title="Cập nhật book"
+                title="Cập nhật Truyện"
                 open={openModalUpdate}
                 onOk={() => { form.submit() }}
                 onCancel={() => {
@@ -239,14 +242,14 @@ const BookModalUpdate = (props) => {
                             <Form.Item
                                 hidden
                                 labelCol={{ span: 24 }}
-                                label="Tên sách"
+                                label="Tên Truyện"
                                 name="_id"
                             >
                                 <Input />
                             </Form.Item>
                         </Col>
 
-                        <Col span={12}>
+                        <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Tên sách"
@@ -256,7 +259,7 @@ const BookModalUpdate = (props) => {
                                 <Input />
                             </Form.Item>
                         </Col>
-                        <Col span={12}>
+                        <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Tác giả"
@@ -266,22 +269,7 @@ const BookModalUpdate = (props) => {
                                 <Input />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Giá tiền"
-                                name="price"
-                                rules={[{ required: true, message: 'Vui lòng nhập giá tiền!' }]}
-                            >
-                                <InputNumber
-                                    min={0}
-                                    style={{ width: '100%' }}
-                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    addonAfter="VND"
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
+                        <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Thể loại"
@@ -297,30 +285,10 @@ const BookModalUpdate = (props) => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
+                        <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Số lượng"
-                                name="quantity"
-                                rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}
-                            >
-                                <InputNumber min={1} style={{ width: '100%' }} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Đã bán"
-                                name="sold"
-                                rules={[{ required: true, message: 'Vui lòng nhập số lượng đã bán!' }]}
-                            >
-                                <InputNumber min={0} disabled style={{ width: '100%' }} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Ảnh Thumbnail"
+                                label="Ảnh Đại Diện"
                                 name="thumbnail"
                             >
                                 <Upload
@@ -343,31 +311,6 @@ const BookModalUpdate = (props) => {
                                 </Upload>
                             </Form.Item>
 
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Ảnh Slider"
-                                name="slider"
-                            >
-                                <Upload
-                                    multiple
-                                    name="slider"
-                                    listType="picture-card"
-                                    className="avatar-uploader"
-                                    customRequest={handleUploadFileSlider}
-                                    beforeUpload={beforeUpload}
-                                    onChange={(info) => handleChange(info, 'slider')}
-                                    onRemove={(file) => handleRemoveFile(file, "slider")}
-                                    onPreview={handlePreview}
-                                    defaultFileList={initForm?.slider?.fileList ?? []}
-                                >
-                                    <div>
-                                        {loadingSlider ? <LoadingOutlined /> : <PlusOutlined />}
-                                        <div style={{ marginTop: 8 }}>Upload</div>
-                                    </div>
-                                </Upload>
-                            </Form.Item>
                         </Col>
                     </Row>
                 </Form>

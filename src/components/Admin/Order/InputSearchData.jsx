@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, theme, notification } from 'antd';
 
-const InputSearch = (props) => {
+const InputSearchData = (props) => {
     const { token } = theme.useToken();
     const [form] = Form.useForm();
     const [searchValue, setSearchValue] = useState({
@@ -66,11 +66,11 @@ const InputSearch = (props) => {
                     <Form.Item
                         labelCol={{ span: 24 }}
                         name={`mainText`}
-                        label={`Tên Truyện`}
+                        label={`Tên sách`}
                     >
                         <Input 
                             onChange={(e) => handleInputChange(e, 'mainText')}
-                            placeholder="Nhập tên truyện để tìm kiếm..."
+                            placeholder="Nhập tên sách để tìm kiếm..."
                         />
                     </Form.Item>
                 </Col>
@@ -129,4 +129,4 @@ const InputSearch = (props) => {
     );
 };
 
-export default InputSearch;
+export default InputSearchData;

@@ -9,9 +9,9 @@ const UserModalUpdate = (props) => {
     // https://ant.design/components/form#components-form-demo-control-hooks
     const [form] = Form.useForm();
 
-
+    const phone =123455678;
     const onFinish = async (values) => {
-        const { fullName, _id, phone } = values;
+        const { fullName, _id } = values;
         setIsSubmit(true)
         const res = await callUpdateUser(_id, fullName, phone);
         if (res && res.data) {
@@ -82,14 +82,6 @@ const UserModalUpdate = (props) => {
                         rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
                     >
                         <Input disabled />
-                    </Form.Item>
-                    <Form.Item
-                        labelCol={{ span: 24 }}
-                        label="Số điện thoại"
-                        name="phone"
-                        rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
-                    >
-                        <Input />
                     </Form.Item>
                 </Form>
             </Modal>

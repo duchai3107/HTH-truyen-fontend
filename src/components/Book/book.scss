@@ -1,15 +1,18 @@
 @import "react-image-gallery/styles/scss/image-gallery.scss";
 
 .view-detail-book {
-
+    
+   
     .original-image,
     .thumbnail-image {
         cursor: pointer;
-
+        margin-left: -20px;
     }
 
     .image-gallery-image {
-        max-height: calc(100vh - 330px) !important;
+        max-height: 400px !important;
+        margin-left: -150px;
+
     }
 
     .title {
@@ -19,6 +22,17 @@
         font-weight: 300;
         line-height: 32px;
         word-break: break-word;
+        font-weight: bold;
+    }
+    .category{
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .author {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
     }
 
     .rating {
@@ -42,7 +56,37 @@
     }
 
     .delivery {
-        padding: 10px 0;
+        margin: 10px 0;
+        .left-side {
+            font-weight: bold;
+        }
+        .right-side {
+            color: #1890ff;
+        }
+    }
+    .comment-section {
+        width: 100%;
+        max-width: 800px;
+        margin-top: 20px;
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .ant-list-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+
+            .ant-list-item-meta-title {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .ant-list-item-meta-description {
+                font-size: 16px;
+            }
+        }
     }
 
     .quantity {
@@ -106,8 +150,8 @@
             overflow: visible;
             outline: 0;
             background: #ff57221a;
-            color: #ee4d2d;
-            border: 1px solid #ee4d2d;
+            color: #6abd1c;
+            border: 1px solid #3724a5;
             box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .03);
             cursor: pointer;
             border-radius: 3px;

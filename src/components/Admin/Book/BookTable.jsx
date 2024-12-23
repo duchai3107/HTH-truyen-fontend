@@ -53,14 +53,6 @@ const BookTable = () => {
         {
             title: 'Id',
             dataIndex: '_id',
-            render: (text, record, index) => {
-                return (
-                    <a href='#' onClick={() => {
-                        setDataViewDetail(record);
-                        setOpenViewDetail(true);
-                    }}>{record._id}</a>
-                )
-            }
         },
         {
             title: 'Tên sách',
@@ -76,17 +68,6 @@ const BookTable = () => {
             title: 'Tác giả',
             dataIndex: 'author',
             sorter: true,
-        },
-        {
-            title: 'Giá tiền',
-            dataIndex: 'price',
-            sorter: true,
-            // https://stackoverflow.com/questions/37985642/vnd-currency-formatting
-            render: (text, record, index) => {
-                return (
-                    <>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price)}</>
-                )
-            }
         },
         {
             title: 'Ngày cập nhật',
@@ -109,7 +90,7 @@ const BookTable = () => {
                         <Popconfirm
                             placement="leftTop"
                             title={"Xác nhận xóa book"}
-                            description={"Bạn có chắc chắn muốn xóa book này ?"}
+                            description={"Bạn có chắc chắn muốn xóa truyện này ?"}
                             onConfirm={() => handleDeleteBook(record._id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
@@ -150,7 +131,7 @@ const BookTable = () => {
     const handleDeleteBook = async (id) => {
         const res = await callDeleteBook(id);
         if (res && res.data) {
-            message.success('Xóa book thành công');
+            message.success('Xóa truyện thành công');
             fetchBook();
         } else {
             notification.error({
@@ -165,7 +146,7 @@ const BookTable = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Table List Books</span>
+                <span>Table List </span>
                 <span style={{ display: 'flex', gap: 15 }}>
                     <Button
                         icon={<ExportOutlined />}

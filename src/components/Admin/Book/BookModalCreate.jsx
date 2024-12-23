@@ -35,33 +35,27 @@ const BookModalCreate = (props) => {
         fetchCategory();
     }, [])
 
-
+     const price= 0;
+     const sold= 0;
+    const quantity= 0;
     const onFinish = async (values) => {
         if (dataThumbnail.length === 0) {
             notification.error({
                 message: 'Lỗi validate',
-                description: 'Vui lòng upload ảnh thumbnail'
-            })
-            return;
-        }
-
-        if (dataSlider.length === 0) {
-            notification.error({
-                message: 'Lỗi validate',
-                description: 'Vui lòng upload ảnh slider'
+                description: 'Vui lòng upload ảnh '
             })
             return;
         }
 
 
-        const { mainText, author, price, sold, quantity, category } = values;
+        const { mainText, author, category } = values;
         const thumbnail = dataThumbnail[0].name;
-        const slider = dataSlider.map(item => item.name);
+        const slider = ["default.jpg"];
 
         setIsSubmit(true)
         const res = await callCreateBook(thumbnail, slider, mainText, author, price, sold, quantity, category);
         if (res && res.data) {
-            message.success('Tạo mới book thành công');
+            message.success('Tạo mới truyen thành công');
             form.resetFields();
             setDataSlider([]);
             setDataThumbnail([])
@@ -122,19 +116,19 @@ const BookModalCreate = (props) => {
         }
     };
 
-    const handleUploadFileSlider = async ({ file, onSuccess, onError }) => {
-        const res = await callUploadBookImg(file);
-        if (res && res.data) {
-            //copy previous state => upload multiple images
-            setDataSlider((dataSlider) => [...dataSlider, {
-                name: res.data.fileUploaded,
-                uid: file.uid
-            }])
-            onSuccess('ok')
-        } else {
-            onError('Đã có lỗi khi upload file');
-        }
-    };
+    // const handleUploadFileSlider = async ({ file, onSuccess, onError }) => {
+    //     const res = await callUploadBookImg(file);
+    //     if (res && res.data) {
+    //         //copy previous state => upload multiple images
+    //         setDataSlider((dataSlider) => [...dataSlider, {
+    //             name: res.data.fileUploaded,
+    //             uid: file.uid
+    //         }])
+    //         onSuccess('ok')
+    //     } else {
+    //         onError('Đã có lỗi khi upload file');
+    //     }
+    // };
 
     const handleRemoveFile = (file, type) => {
         if (type === 'thumbnail') {
@@ -158,7 +152,7 @@ const BookModalCreate = (props) => {
         <>
 
             <Modal
-                title="Thêm mới book"
+                title="Thêm mới "
                 open={openModalCreate}
                 onOk={() => { form.submit() }}
                 onCancel={() => {
@@ -181,17 +175,17 @@ const BookModalCreate = (props) => {
                     autoComplete="off"
                 >
                     <Row gutter={15}>
-                        <Col span={12}>
+                        <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Tên sách"
+                                label="Tên Truyện"
                                 name="mainText"
                                 rules={[{ required: true, message: 'Vui lòng nhập tên hiển thị!' }]}
                             >
                                 <Input />
                             </Form.Item>
                         </Col>
-                        <Col span={12}>
+                        <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Tác giả"
@@ -201,22 +195,7 @@ const BookModalCreate = (props) => {
                                 <Input />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Giá tiền"
-                                name="price"
-                                rules={[{ required: true, message: 'Vui lòng nhập giá tiền!' }]}
-                            >
-                                <InputNumber
-                                    min={0}
-                                    style={{ width: '100%' }}
-                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    addonAfter="VND"
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
+                        <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Thể loại"
@@ -232,31 +211,10 @@ const BookModalCreate = (props) => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Số lượng"
-                                name="quantity"
-                                rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}
-                            >
-                                <InputNumber min={1} style={{ width: '100%' }} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Đã bán"
-                                name="sold"
-                                rules={[{ required: true, message: 'Vui lòng nhập số lượng đã bán!' }]}
-                                initialValue={0}
-                            >
-                                <InputNumber min={0} defaultValue={0} style={{ width: '100%' }} />
-                            </Form.Item>
-                        </Col>
                         <Col span={12}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Ảnh Thumbnail"
+                                label="Ảnh Đại Diện"
                                 name="thumbnail"
                             >
                                 <Upload
@@ -278,30 +236,6 @@ const BookModalCreate = (props) => {
                                 </Upload>
                             </Form.Item>
 
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Ảnh Slider"
-                                name="slider"
-                            >
-                                <Upload
-                                    multiple
-                                    name="slider"
-                                    listType="picture-card"
-                                    className="avatar-uploader"
-                                    customRequest={handleUploadFileSlider}
-                                    beforeUpload={beforeUpload}
-                                    onChange={(info) => handleChange(info, 'slider')}
-                                    onRemove={(file) => handleRemoveFile(file, "slider")}
-                                    onPreview={handlePreview}
-                                >
-                                    <div>
-                                        {loadingSlider ? <LoadingOutlined /> : <PlusOutlined />}
-                                        <div style={{ marginTop: 8 }}>Upload</div>
-                                    </div>
-                                </Upload>
-                            </Form.Item>
                         </Col>
                     </Row>
                 </Form>

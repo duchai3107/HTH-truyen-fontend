@@ -57,14 +57,6 @@ const UserTable = () => {
         {
             title: 'Id',
             dataIndex: '_id',
-            render: (text, record, index) => {
-                return (
-                    <a href='#' onClick={() => {
-                        setDataViewDetail(record);
-                        setOpenViewDetail(true);
-                    }}>{record._id}</a>
-                )
-            }
         },
         {
             title: 'Tên hiển thị',
@@ -75,11 +67,6 @@ const UserTable = () => {
             title: 'Email',
             dataIndex: 'email',
             sorter: true,
-        },
-        {
-            title: 'Số điện thoại',
-            dataIndex: 'phone',
-            sorter: true
         },
         {
             title: 'Ngày cập nhật',
@@ -164,13 +151,6 @@ const UserTable = () => {
                         type="primary"
                         onClick={() => handleExportData()}
                     >Export</Button>
-
-                    <Button
-                        icon={<CloudUploadOutlined />}
-                        type="primary"
-                        onClick={() => setOpenModalImport(true)}
-                    >Import</Button>
-
                     <Button
                         icon={<PlusOutlined />}
                         type="primary"

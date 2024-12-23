@@ -44,34 +44,17 @@ const LayoutAdmin = () => {
 
     const items = [
         {
-            label: <Link to='/admin'>Dashboard</Link>,
-            key: 'dashboard',
-            icon: <AppstoreOutlined />
-        },
-        {
-            label: <span>Manage Users</span>,
-            // key: 'user',
+            label:  <Link to='/admin/user'>USER</Link>,
+            key: 'user',
             icon: <UserOutlined />,
-            children: [
-                {
-                    label: <Link to='/admin/user'>CRUD</Link>,
-                    key: 'crud',
-                    icon: <TeamOutlined />,
-                },
-                // {
-                //     label: 'Files1',
-                //     key: 'file1',
-                //     icon: <TeamOutlined />,
-                // }
-            ]
         },
         {
-            label: <Link to='/admin/book'>Manage Books</Link>,
+            label: <Link to='/admin/book'>Manage Truyện</Link>,
             key: 'book',
             icon: <ExceptionOutlined />
         },
         {
-            label: <Link to='/admin/order'>Manage Orders</Link>,
+            label: <Link to='/admin/order'>Tạo Chapter</Link>,
             key: 'order',
             icon: <DollarCircleOutlined />
         },

@@ -1,71 +1,140 @@
 import ViewOrder from "../../components/Order/ViewOrder";
-import { Breadcrumb, Button, Result, Steps } from 'antd';
+import { Breadcrumb, Spin, Button } from 'antd';
 import './order.scss';
-import { useState } from "react";
-import Payment from "../../components/Order/Payment";
-import { SmileOutlined, HomeOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { HomeOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
+import { callFetchBookById } from "../../services/api";
+import { message } from 'antd';
 
 const OrderPage = (props) => {
-    const [currentStep, setCurrentStep] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [bookData, setBookData] = useState(null);
     const navigate = useNavigate();
+    const { id } = useParams();
+    const location = useLocation();
+    const [currentChapter, setCurrentChapter] = useState(null);
+    const [totalChapters, setTotalChapters] = useState(0);
+    const [showFixedNav, setShowFixedNav] = useState(false);
+
+    useEffect(() => {
+        const fetchBook = async () => {
+            if (!id) {
+                navigate('/');
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const res = await callFetchBookById(id);
+                if (res?.data) {
+                    const params = new URLSearchParams(location.search);
+                    const chapterNum = parseInt(params.get('chapter')) || 1;
+                    
+                    const formattedImages = res.data.slider.map((image, index) => ({
+                        url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${image}`,
+                        title: `Trang ${index + 1}`
+                    }));
+
+                    const totalChaps = Math.floor(formattedImages.length / 7);
+                    setTotalChapters(totalChaps);
+
+                    if (chapterNum) {
+                        const startIndex = (chapterNum - 1) * 7;
+                        const chapterImages = formattedImages.slice(startIndex, startIndex + 7);
+                        setCurrentChapter(chapterNum);
+                        setBookData({
+                            ...res.data,
+                            formattedImages: chapterImages
+                        });
+                    } else {
+                        setBookData({
+                            ...res.data,
+                            formattedImages
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin sách:", error);
+                message.error("Không thể tải thông tin sách");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBook();
+    }, [id, location.search]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 100) {
+                setShowFixedNav(true);
+            } else {
+                setShowFixedNav(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleChangeChapter = (direction) => {
+        if (!currentChapter) return;
+        
+        let nextChapter;
+        if (direction === 'prev') {
+            nextChapter = currentChapter - 1;
+        } else {
+            nextChapter = currentChapter + 1;
+        }
+
+        navigate(`/order/${id}?chapter=${nextChapter}`);
+    };
 
     return (
-        <div style={{ background: '#efefef', padding: "20px 0" }}>
+        <div style={{ background: '#1a1a1a', padding: "20px 0" }}>
             <div className="order-container" style={{ maxWidth: 1440, margin: '0 auto' }}>
-                <Breadcrumb
-                    style={{ margin: '5px 0' }}
-                    items={[
-                        {
-                            // href: '#',
-                            title: <HomeOutlined />,
-                        },
-                        {
-                            title: (
-                                <Link to={'/'}>
-                                    <span>Trang Chủ</span>
-                                </Link>
-                            ),
-                        }
-                    ]}
-                />
-                <div className="order-steps">
-                    <Steps
-                        size="small"
-                        current={currentStep}
-                        status={"finish"}
-                        items={[
-                            {
-                                title: 'Đơn hàng',
-                            },
-                            {
-                                title: 'Đặt hàng',
-                            },
-                            {
-                                title: 'Thanh toán',
-                            },
-                        ]}
-                    />
-                </div>
-                {currentStep === 0 &&
-                    <ViewOrder setCurrentStep={setCurrentStep} />
-                }
-                {currentStep === 1 &&
-                    <Payment setCurrentStep={setCurrentStep} />
-                }
+                {loading ? (
+                    <div className="loading-container">
+                        <Spin tip="Đang tải..." />
+                    </div>
+                ) : (
+                    bookData?.formattedImages && (
+                        <div className="vertical-slider">
+                            <Link to={'/'} className="home-link">
+                                <HomeOutlined /> Trang Chủ
+                            </Link>
+                            
+                            <div className={`chapter-navigation ${showFixedNav ? 'fixed' : ''}`}>
+                                <Button 
+                                    disabled={currentChapter === 1}
+                                    onClick={() => handleChangeChapter('prev')}
+                                    icon={<LeftOutlined />}
+                                />
+                                <span className="current-chapter">
+                                    Chapter {currentChapter}
+                                </span>
+                                <Button 
+                                    disabled={currentChapter === totalChapters}
+                                    onClick={() => handleChangeChapter('next')}
+                                    icon={<RightOutlined />}
+                                />
+                            </div>
 
-                {currentStep === 2 &&
-                    <Result
-                        icon={<SmileOutlined />}
-                        title="Đơn hàng đã được đặt thành công!"
-                        extra={<Button type="primary"
-                            onClick={() => navigate('/history')}
-                        >Xem lịch sử</Button>}
-                    />
-                }
+                            {bookData.formattedImages.map((image, index) => (
+                                <div key={index} className="slider-item">
+                                    <img
+                                        src={image.url}
+                                        className="slider-image"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )
+                )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default OrderPage;

@@ -158,3 +158,37 @@
         }
     }
 }
+
+.pop-cart-body {
+    .pop-cart-content {
+        // ... other styles
+
+        .book {
+            // ... other styles
+
+            .book-content {
+                // ... other styles
+
+                .action-buttons {
+                    display: flex;
+                    gap: 8px;
+                    margin-top: 4px;
+
+                    .ant-btn-link {
+                        padding: 0;
+                        height: auto;
+                        font-size: 13px;
+
+                        &:hover {
+                            color: #40a9ff;
+                            
+                            &.ant-btn-dangerous {
+                                color: #ff4d4f;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
